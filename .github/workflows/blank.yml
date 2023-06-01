@@ -17,12 +17,13 @@ jobs:
 
     - name: Install ngrok
       run: |
-        curl -L -o ngrok.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-        unzip ngrok.zip
+        wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+        unzip ngrok-stable-linux-amd64.zip
         chmod +x ngrok
 
     - name: Start ngrok
-      run: ./ngrok tcp 25565 --authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh
+      run: |
+        ./ngrok tcp 25565 --authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh
 
     - name: Run Minecraft Server
       run: |
