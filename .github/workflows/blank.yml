@@ -1,47 +1,34 @@
-name: Build and Deploy Apache2 Site
+name: minecraft
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install Apache2
+    - name: Set up UFW and Java
       run: |
         sudo apt-get update
-        sudo apt-get install -y apache2
-
-    - name: Start Apache2 service
+        sudo apt-get install ufw -y
+        sudo ufw allow 25565
+        sudo apt-get install openjdk-11-jdk -y
+      
+    - name: Run Minecraft Server
       run: |
-        sudo systemctl start apache2
+        java -Xmx15G -Xms15G -jar server.jar nogui
 
-    - name: Install ngrok
+    - name: get ip
       run: |
-        wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-        unzip ngrok-stable-linux-amd64.zip
-
-    - name: Expose port 3000 with ngrok
+        ip_address=$(curl -s https://2ip.ru/ | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}')
+        echo "Your IP address: $ip_address"
+        
+    - name: hihihih test
       run: |
-        ./ngrok config add-authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh
-        ./ngrok http 3000
-
-    - name: Get ngrok public URL
-      id: ngrok_url
-      run: |
-        sleep 10
-        curl --silent http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url' > ngrok_url.txt
-
-    - name: Print ngrok public URL
-      run: |
-        cat ngrok_url.txt
-
-    - name: Deploy Apache2 site
-      run: |
-        echo "Hello, Apache2!" | sudo tee /var/www/html/index.html
+        while true; do
+          echo "hihihih test"
+          sleep 2
+        done
