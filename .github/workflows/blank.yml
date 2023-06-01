@@ -17,6 +17,7 @@ jobs:
         sudo ufw allow 25565
         sudo apt-get install openjdk-11-jdk -y
         wget -O server.jar https://cdn.getbukkit.org/spigot/spigot-1.12.2.jar
+        echo "eula=true" >> eula.txt
       
     - name: Run Minecraft Server
       run: |
