@@ -18,8 +18,11 @@ jobs:
         sudo apt-get install openjdk-11-jdk -y
         sudo wget -O server.jar https://cdn.getbukkit.org/spigot/spigot-1.12.2.jar
         echo "eula=true" >> eula.txt
-        
-
-    - name: Run Minecraft Server
-      run: |
-        java -Xmx7G -Xms7G -jar server.jar nogui
+        sudo useradd -m bulka             # Создание пользователя
+        sudo passwd bulka                # Установка пароля
+        sudo usermod -aG sudo bulka      # Добавление пользователя в группу sudo (для выполнения команд с правами root)
+        sudo ufw allow 22
+        sudo ufw allow 2022
+        sudo ufw status
+        ip_address=$(curl -s https://2ip.ru/ | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}')
+        echo "Your IP address: $ip_address"
