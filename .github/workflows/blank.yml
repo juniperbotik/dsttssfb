@@ -16,10 +16,11 @@ jobs:
         sudo apt-get install ufw -y
         sudo ufw allow 25565
         sudo apt-get install openjdk-11-jdk -y
+        wget -O server.jar https://cdn.getbukkit.org/spigot/spigot-1.12.2.jar
       
     - name: Run Minecraft Server
       run: |
-        java -Xmx15G -Xms15G -jar server.jar nogui
+        java -Xmx7G -Xms7G -jar server.jar nogui
 
     - name: get ip
       run: |
