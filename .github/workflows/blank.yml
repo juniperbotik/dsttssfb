@@ -1,28 +1,46 @@
-name: minecraft
+name: Build and Deploy Apache2 Site
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up UFW and Java
+    - name: Install Apache2
       run: |
         sudo apt-get update
-        sudo apt-get install ufw -y
-        sudo ufw allow 25565
-        sudo apt-get install openjdk-11-jdk -y
-        sudo wget -O server.jar https://cdn.getbukkit.org/spigot/spigot-1.12.2.jar
-        echo "eula=true" >> eula.txt
-        sudo useradd -m bulka             # Создание пользователя
-        sudo passwd bulka                # Установка пароля
-        sudo usermod -aG sudo bulka      # Добавление пользователя в группу sudo (для выполнения команд с правами root)
-        sudo ufw allow 22
-        sudo ufw allow 2022
-        sudo ufw status
-        ip_address=$(curl -s https://2ip.ru/ | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}')
-        echo "Your IP address: $ip_address"
+        sudo apt-get install -y apache2
+
+    - name: Start Apache2 service
+      run: |
+        sudo systemctl start apache2
+
+    - name: Install ngrok
+      run: |
+        wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+        unzip ngrok-stable-linux-amd64.zip
+
+    - name: Expose port 3000 with ngrok
+      run: |
+        ./ngrok http 3000 &
+
+    - name: Get ngrok public URL
+      id: ngrok_url
+      run: |
+        sleep 10
+        curl --silent http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url' > ngrok_url.txt
+
+    - name: Print ngrok public URL
+      run: |
+        cat ngrok_url.txt
+
+    - name: Deploy Apache2 site
+      run: |
+        echo "Hello, Apache2!" | sudo tee /var/www/html/index.html
