@@ -14,6 +14,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
+        distribution: 'adopt'
 
     - name: Install ngrok
       run: |
@@ -24,6 +25,17 @@ jobs:
     - name: Start ngrok
       run: |
         ./ngrok tcp 25565 --authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh
+
+    - name: Set up UFW
+      run: |
+        sudo apt-get install ufw -y
+        sudo ufw allow 25565
+        sudo ufw enable
+
+    - name: Check UFW status
+      run: |
+        sudo ufw status
+        sudo ufw status numbered
 
     - name: Run Minecraft Server
       run: |
