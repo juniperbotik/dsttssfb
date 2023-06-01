@@ -30,3 +30,11 @@ jobs:
       run: |
         sudo ufw status
         sudo ufw status numbered
+
+    - name: Create main.html
+      run: |
+        echo "<html><body><h1>Hello, world!</h1></body></html>" | sudo tee /var/www/html/main.html
+
+    - name: Restart Apache2
+      run: |
+        sudo service apache2 restart
