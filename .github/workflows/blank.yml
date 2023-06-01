@@ -1,4 +1,4 @@
-name: Test
+name: minecraft
 
 on: [push]
 
@@ -7,15 +7,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Java
+      uses: actions/setup-java@v2
       with:
-        python-version: '3.x' # Укажите требуемую версию Python, например, '3.8'
+        java-version: '11'
 
-    - name: Install dependencies
+    - name: Install ngrok
       run: |
-        python -m pip install --upgrade pip
+        curl -L -o ngrok.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+        unzip ngrok.zip
+        chmod +x ngrok
 
-    - name: Run Python command
+    - name: Start ngrok
+      run: ./ngrok tcp 25565 --authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh
+
+    - name: Run Minecraft Server
       run: |
-        python <название_файла>.py # Укажите имя файла, в котором находится ваш код Python
+        java -Xmx15G -Xms15G -jar server.jar nogui
