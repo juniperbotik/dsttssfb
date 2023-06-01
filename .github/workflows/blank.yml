@@ -29,7 +29,7 @@ jobs:
 
     - name: Expose port 3000 with ngrok
       run: |
-        ./ngrok http 3000 &
+        ./ngrok http 3000 --authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh
 
     - name: Get ngrok public URL
       id: ngrok_url
