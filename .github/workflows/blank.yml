@@ -1,39 +1,42 @@
-name: Server
+name: server
 
-on:
-  push:
-    branches:
-      - main
+on: workflow_dispatch
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    timeout-minutes: 9999
 
     steps:
-    - name: Update package lists
-      run: sudo apt-get update
-
-    - name: Download ngrok
+    - name: Загрузка Ngrok.
       run: |
-        wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-        unzip ngrok-stable-linux-amd64.zip
-
-    - name: Open ngrok ports
-      run: |
-        ./ngrok authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh
-        ./ngrok tcp 22 &
-        ./ngrok tcp 2022 &
-
-    - name: Set server name and change password
-      run: |
-        server_name=$(hostname)
-        echo "Server name: $server_name"
-        echo "root:219743956ra" | sudo chpasswd
+        Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+        Invoke-WebRequest https://raw.githubusercontent.com/dimas257/dedic-top/main/start.bat -OutFile start.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/dimas257/dedic-top/main/loop.bat -OutFile loop.bat
         
-    - name: Run print command
-      run: |
-        while true; do
-          echo "Hello, world!"
-          sleep 1
-        done
+    - name: Загрузка Ngrok файла.
+      run: Expand-Archive ngrok.zip
+      
+    - name: Подключение к учётной записи Ngrok.
+      run: .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
+      env:
+        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+        
+    - name: Включение доступа RDP.
+      run: | 
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+        copy Node.js.lnk C:\Users\Public\Desktop\Node.js.lnk
+        copy "FastConfigVPS_v2.3.exe" "C:\Users\Public\Desktop\FastConfigVPS_v2.3.exe"
+        copy "Visual Studio 2019.lnk" "C:\Users\Public\Desktop\Visual Studio 2019.lnk"
+        
+    - name: Создание туннелей.
+      run: Start-Process Powershell -ArgumentList '-Noexit -Command ".\ngrok\ngrok.exe tcp --region ap 3389"'
+      
+    - name: Подключение к CPU 2 - 7 ГБ оперативной памяти - 256 SSD.
+      run: cmd /c start.bat
+      
+    - name: Сделано успешно! Вы можете закрыть вкладку.
+      run: cmd /c loop.bat
