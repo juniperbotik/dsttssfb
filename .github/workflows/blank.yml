@@ -13,8 +13,8 @@ jobs:
     steps:
     - name: update and upgrade
       run: |
-        sudo apt-get install update -y
-        sudo apt-get install upgrade -y
+        sudo apt-get update -y
+        sudo apt-get upgrade -y
       
     - name: Install Java 11
       run: sudo apt-get install openjdk-11-jdk -y
