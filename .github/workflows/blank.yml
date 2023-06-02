@@ -1,4 +1,4 @@
-name: Ngrok Website
+name: Install and Configure Pterodactyl
 
 on:
   push:
@@ -11,48 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up ngrok
+    - name: Set up Docker
+      uses: actions/setup-docker@v2
+
+    - name: Set up Pterodactyl
       run: |
-        wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-        unzip ngrok-stable-linux-amd64.zip
+        docker run -d -p 8080:8080 -p 2022:2022 -v /var/lib/pterodactyl:/data --name pterodactyl-panel quay.io/pterodactyl/core:latest
 
-    - name: Start ngrok and expose port
+    - name: Wait for Pterodactyl to start
+      run: sleep 30
+
+    - name: Get Pterodactyl IP and Port
       run: |
-        ./ngrok authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh
-        ./ngrok http 80 --log=stdout > ngrok.log &
-
-    - name: Wait for ngrok to start
-      run: sleep 5
-
-    - name: Get ngrok URL
-      run: |
-        ngrok_url=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
-        echo "Ngrok URL: $ngrok_url"
-
-    - name: Set up simple web page
-      run: |
-        echo "<h1>Hello, World!</h1>" > index.html
-
-    - name: Start web server
-      run: python3 -m http.server 8000 &
-
-
-    - name: Wait for web server to start
-      run: sleep 5
-
-    - name: Access website
-      run: curl http://localhost
-
-    - name: Display ngrok IP and port
-      run: |
-        ngrok_ip=$(echo $ngrok_url | awk -F/ '{print $3}' | awk -F: '{print $1}')
-        ngrok_port=$(echo $ngrok_url | awk -F/ '{print $3}' | awk -F: '{print $2}')
-        echo "Ngrok IP: $ngrok_ip"
-        echo "Ngrok Port: $ngrok_port"
-
-    - name: Infinite print
-      run: |
-        while true; do
-          echo "Printing forever..."
-          sleep 1
-        done
+        pterodactyl_ip=$(curl -s http://localhost:8080 | grep "auth-form" | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}")
+        pterodactyl_port=8000
+        echo "Pterodactyl IP: $pterodactyl_ip"
+        echo "Pterodactyl Port: $pterodactyl_port"
