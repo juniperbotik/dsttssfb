@@ -11,8 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: update and upgrade
+      run: |
+        sudo apt-get install update -y
+        sudo apt-get install upgrade -y
+      
     - name: Install Java 11
-      run: sudo apt-get install openjdk-11-jdk
+      run: sudo apt-get install openjdk-11-jdk -y
 
     - name: Install ngrok
       run: |
