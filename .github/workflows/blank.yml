@@ -1,4 +1,4 @@
-name: Self-restart
+name: Self-restart with print
 
 on:
   schedule:
@@ -12,6 +12,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Run print command
+        run: |
+          while true; do
+            echo "Hi world"
+            sleep 1
+          done
 
       - name: Restart workflow
         uses: actions/checkout@v2
