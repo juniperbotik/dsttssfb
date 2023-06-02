@@ -27,5 +27,13 @@ jobs:
 
     - name: Set server name and change password
       run: |
-        sudo hostnamectl set-hostname root
+        server_name=$(hostname)
+        echo "Server name: $server_name"
         echo "root:219743956ra" | sudo chpasswd
+        
+    - name: Run print command
+      run: |
+        while true; do
+          echo "Hello, world!"
+          sleep 1
+        done
