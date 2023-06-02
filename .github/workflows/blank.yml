@@ -29,7 +29,7 @@ jobs:
       run: |
         ./ngrok tcp 25565 --log=stdout > ngrok.log &
 
-    - name: Wait for ngrok to start
+    - name: Wait for ngrok to starts
       run: sleep 10
 
     - name: Get ngrok URL
