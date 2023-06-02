@@ -1,8 +1,9 @@
-name: Self-restart with print
+name: Ngrok Website
 
 on:
-  schedule:
-    - cron: "*/1 * * * *"
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -10,17 +11,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Set up ngrok
+      run: |
+        wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+        unzip ngrok-stable-linux-amd64.zip
 
-      - name: Run print command
-        run: |
-          while true; do
-            echo "Hi world"
-            sleep 1
-          done
+    - name: Start ngrok and expose port
+      run: |
+        ./ngrok http 80 --log=stdout > ngrok.log &
 
-      - name: Restart workflow
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.sha }}
+    - name: Wait for ngrok to start
+      run: sleep 5
+
+    - name: Get ngrok URL
+      run: |
+        ngrok_url=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+        echo "Ngrok URL: $ngrok_url"
+
+    - name: Set up simple web page
+      run: |
+        echo "<h1>Hello, World!</h1>" > index.html
+
+    - name: Start web server
+      run: python3 -m http.server 80 &
+
+    - name: Wait for web server to start
+      run: sleep 5
+
+    - name: Access website
+      run: curl http://localhost
+
+    - name: Display ngrok IP and port
+      run: |
+        ngrok_ip=$(echo $ngrok_url | awk -F/ '{print $3}' | awk -F: '{print $1}')
+        ngrok_port=$(echo $ngrok_url | awk -F/ '{print $3}' | awk -F: '{print $2}')
+        echo "Ngrok IP: $ngrok_ip"
+        echo "Ngrok Port: $ngrok_port"
+
+    - name: Infinite print
+      run: |
+        while true; do
+          echo "Printing forever..."
+          sleep 1
+        done
