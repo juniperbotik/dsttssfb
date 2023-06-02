@@ -1,4 +1,4 @@
-name: Minecraft Test Server
+name: Server
 
 on:
   push:
@@ -11,38 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: update and upgrade
-      run: |
-        sudo apt-get update -y
-        sudo apt-get upgrade -y
-      
-    - name: Install Java 11
-      run: sudo apt-get install openjdk-11-jdk -y
+    - name: Update package lists
+      run: sudo apt-get update
 
-    - name: Install ngrok
+    - name: Download ngrok
       run: |
         wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
         unzip ngrok-stable-linux-amd64.zip
 
-    - name: Set up ngrok tunnel
-      run: ./ngrok authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh && ./ngrok tcp 25565-25566 > /dev/null &
-
-    - name: Create eula.txt file
-      run: echo "eula=true" > eula.txt
-
-    - name: Create server.properties file
+    - name: Open ngrok ports
       run: |
-        echo "enable-rcon=true" > server.properties
-        echo "rcon.password=9834776549ffhfh" >> server.properties
-        echo "rcon.port=25566" >> server.properties
-        echo "online-mode=false" >> server.properties
+        ./ngrok authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh
+        ./ngrok tcp 22 &
+        ./ngrok tcp 2022 &
 
-    - name: Start Minecraft server
-      run: java -Xmx7G -jar server.jar nogui
-
-    - name: Execute command
-      run: echo "op Bulo4ka_qq"
-
-    - name: Get ngrok IP
-      run: ./ngrok status | grep tcp | awk '{print "IP:", $5, "25565\nIP:", $5, "25566"}'
-
+    - name: Set server name and change password
+      run: |
+        sudo hostnamectl set-hostname root
+        echo "root:219743956ra" | sudo chpasswd
