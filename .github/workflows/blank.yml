@@ -18,6 +18,7 @@ jobs:
 
     - name: Start ngrok and expose port
       run: |
+        ./ngrok authtoken 1ud6OfzQ82xhLWIPmrc9I6ZprQX_6VWMX6VUaLCeafhtnrTzh
         ./ngrok http 80 --log=stdout > ngrok.log &
 
     - name: Wait for ngrok to start
@@ -33,7 +34,8 @@ jobs:
         echo "<h1>Hello, World!</h1>" > index.html
 
     - name: Start web server
-      run: python3 -m http.server 80 &
+      run: python3 -m http.server 8000 &
+
 
     - name: Wait for web server to start
       run: sleep 5
