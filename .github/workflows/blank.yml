@@ -18,7 +18,7 @@ jobs:
           wget -O Wave.tar.gz https://www.dropbox.com/s/v0ahsx2bym8rgju/Wave.tar.gz?dl=1
 
       - name: Extract Wave.tar.gz
-        run: tar -xzf Wave.tar.gz
+        run: tar -xf Wave.tar.gz
 
       - name: Change Directory to Wave
         run: cd Wave
