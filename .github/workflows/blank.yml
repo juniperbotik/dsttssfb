@@ -1,4 +1,4 @@
-name: Wave Workflow
+name: you name
 
 on:
   push:
@@ -13,15 +13,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Download Wave.zip
+      - name: update and upgrade
         run: |
-          wget -O Wave.zip https://www.dropbox.com/s/gcwg085kk623k75/Wave.zip?dl=1
+          apt-get update -y
+          apt-get upgrade -y
 
-      - name: Extract Wave.zip
-        run: unzip Wave.zip
+      - name: you name
+        run: |
+          you command
+          you command
+          you command
 
-      - name: Change Directory to Wave
-        run: cd Wave
-
-      - name: Run Wave.jar
-        run: ".jdk/bin/java" -Xmx6G -server -jar Wave.jar
+      - name: you name
+        run: |
+          you command
+          you command
+          you command
