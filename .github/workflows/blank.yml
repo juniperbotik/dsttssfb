@@ -1,4 +1,4 @@
-name: you name
+name: Wave Workflow
 
 on:
   push:
@@ -13,19 +13,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: update and upgrade
+      - name: Download Wave.zip
         run: |
-          apt-get update -y
-          apt-get upgrade -y
+          wget -O Wave.zip https://www.dropbox.com/s/gcwg085kk623k75/Wave.zip?dl=1
 
-      - name: you name
+      - name: Install Java
         run: |
-          you command
-          you command
-          you command
+          wget https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz
+          tar xf OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz
+          rm OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz
+          rm /opt/jdk-11.0.18+10 -rf
+          mv jdk-11.0.18+10 /opt
 
-      - name: you name
-        run: |
-          you command
-          you command
-          you command
+      - name: Set Java Version
+        run: ln -svf /opt/jdk-11.0.18+10/bin/java /usr/bin/java
+
+      - name: Extract Wave.zip
+        run: unzip Wave.zip
+
+      - name: Run Wave.jar
+        run: java -Xmx6G -server -jar Wave.jar
