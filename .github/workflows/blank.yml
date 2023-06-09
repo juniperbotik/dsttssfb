@@ -1,4 +1,4 @@
-name: Wave Workflow
+name: Download Ngrok and PufferPanel
 
 on:
   push:
@@ -10,26 +10,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Download Wave.zip
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Download javajdk11
         run: |
-          wget -O Wave.zip https://www.dropbox.com/s/gcwg085kk623k75/Wave.zip?dl=1
-
-      - name: Install Java
+           apt-get update
+           apt-get upgrade
+           
+      - name: Download javajdk11
         run: |
-          wget https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz
-          tar xf OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz
-          rm OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz
-          rm /opt/jdk-11.0.18+10 -rf
-          mv jdk-11.0.18+10 /opt
+           "wget https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz && tar xf OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz && rm OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz && rm /opt/jdk-11.0.18+10 -rf && mv jdk-11.0.18+10 /opt"
+           "ln -svf /opt/jdk-11.0.18+10/bin/java /usr/bin/java"
+          
+      - name: Download Ngrok
+        run: |
+          curl -o ngrok.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+          unzip ngrok.zip
+          chmod +x ngrok
 
-      - name: Set Java Version
-        run: ln -svf /opt/jdk-11.0.18+10/bin/java /usr/bin/java
+      - name: Download PufferPanel
+        run: |
+          curl -o pufferpanel.zip -L https://github.com/PufferPanel/PufferPanel/releases/download/v2.6.6/pufferpanel_2.6.6_linux_amd64.zip
+          unzip pufferpanel.zip
 
-      - name: Extract Wave.zip
-        run: unzip Wave.zip
+      - name: Run PufferPanel
+        run: ./pufferpanel run &
 
-      - name: Run Wave.jar
-        run: java -Xmx6G -server -jar Wave.jar
+      - name: Set up Ngrok
+        run: |
+          ./ngrok authtoken 1wrEftpedFU8eT91VOEGBiEj8XZ_2HTii1ryAoLfiiNoNYNUc
+          ./ngrok http 8080
