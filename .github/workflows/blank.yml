@@ -20,12 +20,12 @@ jobs:
 
       - name: Download javajdk11
         run: |
-           apt-get update
-           apt-get upgrade
+           apt update
+           apt upgrade
            
       - name: Download javajdk11
         run: |
-           "apt-get install default-jre"
+           "apt install default-jre"
           
       - name: Download Ngrok
         run: |
