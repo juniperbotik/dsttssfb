@@ -1,4 +1,4 @@
-name: Download Ngrok and PufferPanel
+name: Install and Start DDRaceNetwork Server
 
 on:
   push:
@@ -13,35 +13,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Download javajdk11
+      - name: Install dependencies
         run: |
-           apt update
-           apt upgrade
-           
-      - name: Download javajdk11
-        run: |
-           "apt install default-jre"
-          
-      - name: Download Ngrok
-        run: |
-          curl -o ngrok.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-          unzip ngrok.zip
-          chmod +x ngrok
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake libfreetype6-dev libsqlite3-dev
+          git clone https://github.com/ddnet/ddnet.git
+          cd ddnet
+          make
 
-      - name: Download PufferPanel
+      - name: Start DDRaceNetwork Server
         run: |
-          curl -o pufferpanel.zip -L https://github.com/PufferPanel/PufferPanel/releases/download/v2.6.6/pufferpanel_2.6.6_linux_amd64.zip
-          unzip pufferpanel.zip
+          cd ddnet
+          ./DDNet-Server &
 
-      - name: Run PufferPanel
-        run: ./pufferpanel run &
+      - name: Install Ngrok
+        run: |
+          wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+          unzip ngrok-stable-linux-amd64.zip
 
-      - name: Set up Ngrok
+      - name: Setup Ngrok and expose port
         run: |
           ./ngrok authtoken 1wrEftpedFU8eT91VOEGBiEj8XZ_2HTii1ryAoLfiiNoNYNUc
-          ./ngrok http 8080
+          ./ngrok tcp 8888
