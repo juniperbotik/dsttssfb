@@ -22,7 +22,6 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update -y
-          sudo apt install -y libsdl2-2.0-0 libfreetype6 libcurl4 libglew2.1 libssl1.1 libsqlite3-0
 
       - name: Install ngrok
         run: |
