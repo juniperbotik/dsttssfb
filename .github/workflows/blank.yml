@@ -1,41 +1,14 @@
-name: DDNet Setup and Run
-
-on:
-  push:
-    branches:
-      - main
-
+on: push
+name: Run the AFK-Bot
 jobs:
-  build:
+  join:
+    name: Join the server
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Download DDNet
-        run: |
-          wget https://ddnet.org/downloads/DDNet-17.0.3-linux_x86_64.tar.xz
-          tar -xf DDNet-17.0.3-linux_x86_64.tar.xz
-          cd DDNet-17.0.3-linux_x86_64
-
-      - name: Install dependencies
-        run: |
-          sudo apt update -y
-
-      - name: Install ngrok
-        run: |
-          wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-          unzip ngrok-stable-linux-amd64.zip
-
-      - name: Authenticate ngrok
-        run: ./ngrok authtoken 1wrEftpedFU8eT91VOEGBiEj8XZ_2HTii1ryAoLfiiNoNYNUc
-
-      - name: Open port using ngrok
-        run: ./ngrok tcp 8303
-
-      - name: Set executable permission for DDNet-Server
-        run: chmod +x DDNet-Server
-
-      - name: Run DDNet-Server
-        run: ./DDNet-Server
+    - name: Start Afk-bot
+      uses: Minionguyjpro/Afk-bot@v1.0.3
+      with:
+        ip: example.ip.org
+        name: AFKBOT
+        port: 25565
+        auto-skip-night: true
