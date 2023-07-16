@@ -1,14 +1,24 @@
-on: push
-name: Run the AFK-Bot
+name: Install and Run MC Bot
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
-  join:
-    name: Join the server
+  install-and-run-mcbot:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Start Afk-bot
-      uses: Minionguyjpro/Afk-bot@v1.0.3
-      with:
-        ip: example.ip.org
-        name: AFKBOT
-        port: 25565
-        auto-skip-night: true
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          repository: nejason57mars/mcbot
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+
+      - name: Run MC Bot
+        run: java -jar mcbot.jar 65.108.21.157:25966 340 botjoiner 120 -1
